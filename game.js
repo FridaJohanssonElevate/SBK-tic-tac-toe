@@ -153,20 +153,6 @@ function findBestMove() {
     
     return bestMove;
 }
-
-function isStrategicCorner(corner) {
-    // Check if placing X in this corner creates multiple winning paths
-    gameState[corner] = 'X';
-    let winningPaths = 0;
-    
-    winningConditions.forEach(condition => {
-        if (condition.includes(corner)) {
-            const otherCells = condition.filter(i => i !== corner);
-            if (gameState[otherCells[0]] !== 'O' && gameState[otherCells[1]] !== 'O') {
-                winningPaths++;
-            }
-        }
-    });
     
     gameState[corner] = '';
     return winningPaths > 1;
