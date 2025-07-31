@@ -108,8 +108,8 @@ function makeComputerMove() {
 }
 
 function findBestMove() {
-    // Sometimes make a random move (30% chance)
-    if (Math.random() < 0.3) {
+    // Make random moves more often (70% chance)
+    if (Math.random() < 0.7) {
         const emptyCells = [];
         for (let i = 0; i < gameState.length; i++) {
             if (gameState[i] === '') {
@@ -121,17 +121,11 @@ function findBestMove() {
         }
     }
 
-    // Otherwise, try to make a decent move
-    const emptyCells = gameState.filter(cell => cell === '').length;
-    if (emptyCells >= 7) {
-        // Take center or a random corner
-        if (gameState[4] === '') return 4;
-        
-        const corners = [0, 2, 6, 8];
-        const availableCorners = corners.filter(i => gameState[i] === '');
-        if (availableCorners.length > 0) {
-            return availableCorners[Math.floor(Math.random() * availableCorners.length)];
-        }
+    // Otherwise just try to take center or any empty cell
+    if (gameState[4] === '') return 4;
+    
+    for (let i = 0; i < gameState.length; i++) {
+        if (gameState[i] === '') return i;
     }
 
     // Use minimax for mid and end game
@@ -153,6 +147,20 @@ function findBestMove() {
     
     return bestMove;
 }
+
+function isStrategicCorner(corner) {
+    // Check if placing X in this corner creates multiple winning paths
+    gameState[corner] = 'X';
+    let winningPaths = 0;
+    
+    winningConditions.forEach(condition => {
+        if (condition.includes(corner)) {
+            const otherCells = condition.filter(i => i !== corner);
+            if (gameState[otherCells[0]] !== 'O' && gameState[otherCells[1]] !== 'O') {
+                winningPaths++;
+            }
+        }
+    });
     
     gameState[corner] = '';
     return winningPaths > 1;
@@ -165,13 +173,16 @@ function checkWinForPlayer(player) {
 }
 
 function minimax(board, depth, isMaximizing) {
-    // Limit search depth to make computer less perfect
-    if (depth > 2) return 0;
+    // Limit search depth even more to make computer less perfect
+    if (depth > 1) return 0;
+    
+    // Add randomness to evaluation
+    const randomFactor = (Math.random() - 0.5) * 2;
     
     // Check terminal states
-    if (checkWinForPlayer('X')) return 5 - depth;
-    if (checkWinForPlayer('O')) return depth - 5;
-    if (board.every(cell => cell !== '')) return 0;
+    if (checkWinForPlayer('X')) return (3 - depth + randomFactor);
+    if (checkWinForPlayer('O')) return (depth - 3 + randomFactor);
+    if (board.every(cell => cell !== '')) return randomFactor;
     
     if (isMaximizing) {
         let bestScore = -Infinity;
