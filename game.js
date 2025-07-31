@@ -108,8 +108,20 @@ function makeComputerMove() {
 }
 
 function findBestMove() {
-    // Make random moves more often (70% chance)
-    if (Math.random() < 0.7) {
+    // Check for immediate win
+    for (let i = 0; i < gameState.length; i++) {
+        if (gameState[i] === '') {
+            gameState[i] = 'X';
+            if (checkWinForPlayer('X')) {
+                gameState[i] = '';
+                return i;
+            }
+            gameState[i] = '';
+        }
+    }
+
+    // Make random moves sometimes (40% chance)
+    if (Math.random() < 0.4) {
         const emptyCells = [];
         for (let i = 0; i < gameState.length; i++) {
             if (gameState[i] === '') {
@@ -121,9 +133,28 @@ function findBestMove() {
         }
     }
 
-    // Otherwise just try to take center or any empty cell
+    // Block opponent's winning move
+    for (let i = 0; i < gameState.length; i++) {
+        if (gameState[i] === '') {
+            gameState[i] = 'O';
+            if (checkWinForPlayer('O')) {
+                gameState[i] = '';
+                return i;
+            }
+            gameState[i] = '';
+        }
+    }
+
+    // Try to take center or corners
     if (gameState[4] === '') return 4;
     
+    const corners = [0, 2, 6, 8];
+    const availableCorners = corners.filter(i => gameState[i] === '');
+    if (availableCorners.length > 0) {
+        return availableCorners[Math.floor(Math.random() * availableCorners.length)];
+    }
+    
+    // Take any available cell
     for (let i = 0; i < gameState.length; i++) {
         if (gameState[i] === '') return i;
     }
@@ -173,15 +204,15 @@ function checkWinForPlayer(player) {
 }
 
 function minimax(board, depth, isMaximizing) {
-    // Limit search depth even more to make computer less perfect
-    if (depth > 1) return 0;
+    // Allow for deeper search but not too deep
+    if (depth > 2) return 0;
     
-    // Add randomness to evaluation
-    const randomFactor = (Math.random() - 0.5) * 2;
+    // Add small randomness to evaluation
+    const randomFactor = (Math.random() - 0.5) * 0.5;
     
     // Check terminal states
-    if (checkWinForPlayer('X')) return (3 - depth + randomFactor);
-    if (checkWinForPlayer('O')) return (depth - 3 + randomFactor);
+    if (checkWinForPlayer('X')) return (5 - depth + randomFactor);
+    if (checkWinForPlayer('O')) return (depth - 5 + randomFactor);
     if (board.every(cell => cell !== '')) return randomFactor;
     
     if (isMaximizing) {
