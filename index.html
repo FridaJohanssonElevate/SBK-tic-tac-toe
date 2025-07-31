@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Tre i rad</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            position: relative;
+        }
+
+        .logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: min(200px, 40vw);
+            height: auto;
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+
+        .game-container {
+            margin-top: 50px;
+        }
+
+        .heading {
+            font-size: min(32px, 6vw);
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+            padding: 0 10px;
+        }
+
+        .status {
+            margin: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .cell {
+            width: min(100px, 30vw);
+            height: min(100px, 30vw);
+            background-color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: min(48px, 15vw);
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .cell:hover, .cell:active {
+            transform: scale(1.05);
+        }
+
+        .cell.o {
+            background-image: url('Assets/sbk-logo.png');
+            background-size: 80%;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: transparent;
+        }
+
+        .cell.x {
+            color: #FFD700; /* Yellow */
+        }
+
+        .restart-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .restart-button:hover {
+            background-color: #45a049;
+        }
+
+        .win-line {
+            position: absolute;
+            background-color: #4CAF50;
+            transition: transform 0.3s;
+        }
+
+        @keyframes celebrate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .winner .cell.winning {
+            animation: celebrate 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <img src="Assets/sbk-logo.png" alt="SBK Logo" class="logo" id="logo">
+    <div class="game-container">
+        <h1 class="heading">Svalövs BK i Hällevik 2025</h1>
+        <div class="status" id="status">Din tur (X)</div>
+        <div class="board" id="board">
+            <button class="cell" data-index="0"></button>
+            <button class="cell" data-index="1"></button>
+            <button class="cell" data-index="2"></button>
+            <button class="cell" data-index="3"></button>
+            <button class="cell" data-index="4"></button>
+            <button class="cell" data-index="5"></button>
+            <button class="cell" data-index="6"></button>
+            <button class="cell" data-index="7"></button>
+            <button class="cell" data-index="8"></button>
+        </div>
+        <button class="restart-button" id="restartButton">Restart Game</button>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
