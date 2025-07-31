@@ -108,58 +108,31 @@ function makeComputerMove() {
 }
 
 function findBestMove() {
-    // First, check for immediate win
-    for (let i = 0; i < gameState.length; i++) {
-        if (gameState[i] === '') {
-            gameState[i] = 'X';
-            if (checkWinForPlayer('X')) {
-                gameState[i] = '';
-                return i;
+    // Sometimes make a random move (30% chance)
+    if (Math.random() < 0.3) {
+        const emptyCells = [];
+        for (let i = 0; i < gameState.length; i++) {
+            if (gameState[i] === '') {
+                emptyCells.push(i);
             }
-            gameState[i] = '';
+        }
+        if (emptyCells.length > 0) {
+            return emptyCells[Math.floor(Math.random() * emptyCells.length)];
         }
     }
 
-    // Then, block opponent's winning move
-    for (let i = 0; i < gameState.length; i++) {
-        if (gameState[i] === '') {
-            gameState[i] = 'O';
-            if (checkWinForPlayer('O')) {
-                gameState[i] = '';
-                return i;
-            }
-            gameState[i] = '';
-        }
-    }
-
-    // Strategic moves for early game
-  /*  const emptyCells = gameState.filter(cell => cell === '').length;
-    if (emptyCells >= 7) 
-    {
-        // Take center if available
+    // Otherwise, try to make a decent move
+    const emptyCells = gameState.filter(cell => cell === '').length;
+    if (emptyCells >= 7) {
+        // Take center or a random corner
         if (gameState[4] === '') return 4;
         
-        // If center is taken, take a corner
         const corners = [0, 2, 6, 8];
         const availableCorners = corners.filter(i => gameState[i] === '');
-        if (availableCorners.length > 0) 
-        {
-            // If opponent took center, take any corner
-            if (gameState[4] === 'O') 
-            {
-                return availableCorners[Math.floor(Math.random() * availableCorners.length)];
-            }
-            // Otherwise, prefer corners that create two winning paths
-            for (const corner of availableCorners) 
-            {
-                if (isStrategicCorner(corner)) 
-                {
-                    return corner;
-                }
-            }
-            return availableCorners[0];
+        if (availableCorners.length > 0) {
+            return availableCorners[Math.floor(Math.random() * availableCorners.length)];
         }
-    }*/
+    }
 
     // Use minimax for mid and end game
     let bestScore = -Infinity;
@@ -206,9 +179,12 @@ function checkWinForPlayer(player) {
 }
 
 function minimax(board, depth, isMaximizing) {
+    // Limit search depth to make computer less perfect
+    if (depth > 2) return 0;
+    
     // Check terminal states
-    if (checkWinForPlayer('X')) return 10 - depth;
-    if (checkWinForPlayer('O')) return depth - 10;
+    if (checkWinForPlayer('X')) return 5 - depth;
+    if (checkWinForPlayer('O')) return depth - 5;
     if (board.every(cell => cell !== '')) return 0;
     
     if (isMaximizing) {
