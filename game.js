@@ -133,28 +133,33 @@ function findBestMove() {
     }
 
     // Strategic moves for early game
-    const emptyCells = gameState.filter(cell => cell === '').length;
-    if (emptyCells >= 7) {
+  /*  const emptyCells = gameState.filter(cell => cell === '').length;
+    if (emptyCells >= 7) 
+    {
         // Take center if available
         if (gameState[4] === '') return 4;
         
         // If center is taken, take a corner
         const corners = [0, 2, 6, 8];
         const availableCorners = corners.filter(i => gameState[i] === '');
-        if (availableCorners.length > 0) {
+        if (availableCorners.length > 0) 
+        {
             // If opponent took center, take any corner
-            if (gameState[4] === 'O') {
+            if (gameState[4] === 'O') 
+            {
                 return availableCorners[Math.floor(Math.random() * availableCorners.length)];
             }
             // Otherwise, prefer corners that create two winning paths
-            for (const corner of availableCorners) {
-                if (isStrategicCorner(corner)) {
+            for (const corner of availableCorners) 
+            {
+                if (isStrategicCorner(corner)) 
+                {
                     return corner;
                 }
             }
             return availableCorners[0];
         }
-    }
+    }*/
 
     // Use minimax for mid and end game
     let bestScore = -Infinity;
